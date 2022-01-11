@@ -1,9 +1,25 @@
 import { Form, Input, Button, Checkbox } from 'antd';
+import { ADMIN, setAuth, setLogin } from "../store/reducers/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {RootState} from "../store/store";
 
 // TODO Не понятно, что должен возвращать компонент, если этот компонент используется для роутинга
 function MainPage (): any {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const { login } = useSelector((state: RootState) => state.authReducer)
+
     const onFinish = (values: any) => {
-        console.log('Success:', values);
+        const { username } = values
+
+        if (username === ADMIN) {
+            dispatch(setAuth(true))
+            dispatch(setLogin(username))
+            navigate('/tables')
+        } else {
+            // TODO если логин неправильный
+        }
     };
 
     const onFinishFailed = (errorInfo: any) => {
@@ -15,10 +31,11 @@ function MainPage (): any {
             <h1>
                 Main page
             </h1>
+
             <Form
                 name="basic"
                 wrapperCol={{ offset: 0, span: 5 }}
-                initialValues={{ remember: true }}
+                initialValues={{ remember: true, username: login }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
@@ -29,14 +46,6 @@ function MainPage (): any {
                     rules={[{ required: true, message: 'Please input your username!' }]}
                 >
                     <Input />
-                </Form.Item>
-
-                <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
-                >
-                    <Input.Password />
                 </Form.Item>
 
                 <Form.Item name="remember" valuePropName="checked" wrapperCol={{ offset: 0, span: 16 }}>
