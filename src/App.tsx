@@ -1,24 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import MainPage from "./views/MainPage";
+import TablePage from "./views/TablePage";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
+import { Layout, Menu } from 'antd';
+const { Header, Content, Footer } = Layout;
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <Layout>
+            <Header>
+                <div className='logo'>
+                    Pet project
+                </div>
+                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+                </Menu>
+            </Header>
+            <Content style={{ padding: '0 50px' }}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path='/' element={ <MainPage /> } />
+                        <Route path='tables' element={ <TablePage /> }/>
+                    </Routes>
+                </BrowserRouter>
+            </Content>
+        </Layout>
     </div>
   );
 }
