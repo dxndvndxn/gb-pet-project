@@ -3,6 +3,7 @@ import { ADMIN, setAuth, setLogin } from "../store/reducers/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {RootState} from "../store/store";
+import authUser from "../api/authUser";
 
 // TODO Не понятно, что должен возвращать компонент, если этот компонент используется для роутинга
 function MainPage (): any {
@@ -14,9 +15,12 @@ function MainPage (): any {
         const { username } = values
 
         if (username === ADMIN) {
-            dispatch(setAuth(true))
-            dispatch(setLogin(username))
-            navigate('/tables')
+            authUser('data.json')
+                .then(data => {
+                    dispatch(setAuth(data.isAuth))
+                    dispatch(setLogin(data.user))
+                    navigate('/tables')
+                })
         } else {
             // TODO если логин неправильный
         }
