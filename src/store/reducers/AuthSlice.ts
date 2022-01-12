@@ -18,7 +18,6 @@ export const authSlice = createSlice({
     reducers: {
         setAuth: (state, action: PayloadAction<boolean>) => {
             state.isAuth = action.payload
-            console.log(action.payload)
         },
         setLogin: (state, action: PayloadAction<string>) => {
             state.login = action.payload

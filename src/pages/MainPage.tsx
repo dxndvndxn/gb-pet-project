@@ -1,12 +1,13 @@
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form, Input, Button, Checkbox, Typography } from 'antd';
 import { ADMIN, setAuth, setLogin } from "../store/reducers/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {RootState} from "../store/store";
 import authUser from "../api/authUser";
+const { Title } = Typography;
 
 // TODO Не понятно, что должен возвращать компонент, если этот компонент используется для роутинга
-function MainPage (): any {
+function MainPage () {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const { login } = useSelector((state: RootState) => state.authReducer)
@@ -32,9 +33,9 @@ function MainPage (): any {
 
     return (
         <>
-            <h1>
+            <Title level={2}>
                 Main page
-            </h1>
+            </Title>
 
             <Form
                 name="basic"

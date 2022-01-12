@@ -1,21 +1,16 @@
 import React from 'react';
-import MainPage from "./views/MainPage";
-import TablePage from "./views/TablePage";
+import MainPage from "./pages/MainPage";
+import TablePage from "./pages/TablePage";
+import Header from "./components/Header/Header";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
-import { Layout, Menu } from 'antd';
-const { Header, Content, Footer } = Layout;
+import { Layout } from 'antd';
+const { Content } = Layout;
 
 function App() {
   return (
     <div className="App">
         <Layout>
-            <Header>
-                <div className='logo'>
-                    Pet project
-                </div>
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                </Menu>
-            </Header>
+            <Header />
             <Content style={{ padding: '0 50px' }}>
                 <BrowserRouter>
                     <Routes>
