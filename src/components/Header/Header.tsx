@@ -1,13 +1,14 @@
 import { Layout, Menu } from 'antd';
 import './index.scss'
+import { Link } from "react-router-dom";
 const { Header: AntdHeader } = Layout;
 
 function Header () {
     return (
         <AntdHeader>
-            <div className='logo'>
+            <Link to='/' className='logo'>
                 Pet project
-            </div>
+            </Link>
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']} />
         </AntdHeader>
     )

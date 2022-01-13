@@ -3,7 +3,6 @@ import { RootState } from "../store/store";
 import {Table, Button, Space, Form, InputNumber, Input} from 'antd';
 import React, { useState } from "react";
 import { EditOutlined } from '@ant-design/icons';
-import EditTableExample from "../components/EditTableExample/EditTableExample";
 
 type RowType = {
     key: string,
@@ -21,6 +20,7 @@ type CellProps = {
 }
 
 function TablePage () {
+    console.log(123)
     const { login, isAuth } = useSelector((state: RootState) => state.authReducer)
     const [ dataTable, setDataTable ] = useState(Array(3).fill({
         key: 0,
@@ -32,8 +32,9 @@ function TablePage () {
     // Ключ текущей редактируемой строки
     const [editingKey, setEditingKey] = useState('')
 
+    // TODO не понятно, что здесь за магия происходит
     const edit = (record: Partial<RowType> & { key: React.Key }) => {
-        form.setFieldsValue({ name: '', age: '', address: '', ...record })
+        form.setFieldsValue({ ...record })
         setEditingKey(record.key)
     }
 
@@ -44,6 +45,36 @@ function TablePage () {
         setDataTable(filteredDataTable)
     }
 
+    const cancel = () => {
+        setEditingKey('');
+    };
+
+    const save = async (key: React.Key) => {
+        try {
+            // TODO не понятно, что означает конструкция as
+            const row = (await form.validateFields()) as RowType
+
+            const newData = [...dataTable]
+            const index = newData.findIndex(item => key === item.key)
+
+            if (index > -1) {
+                const item = newData[index]
+                newData.splice(index, 1, {
+                    ...item,
+                    ...row,
+                })
+                setDataTable(newData)
+                setEditingKey('')
+            } else {
+                newData.push(row)
+                setDataTable(newData)
+                setEditingKey('')
+            }
+        } catch (errInfo) {
+            console.log('Validate Failed:', errInfo)
+        }
+    };
+
     // Header таблицы
     const columns = [
         { title: 'Id', dataIndex: 'key', key: 'key', editable: true, },
@@ -53,16 +84,30 @@ function TablePage () {
             title: 'Action',
             dataIndex: '',
             key: 'x',
-            render: (_: any, record: RowType) => (
-                <Space size="middle">
-                    <Button onClick={() => edit(record)}>
-                        <EditOutlined />
-                    </Button>
-                    <Button type="primary" onClick={() => removeRow(record)} danger>
-                        Delete
-                    </Button>
-                </Space>
-            ),
+            render: (_: any, record: RowType) => {
+                const editable = isEditing(record)
+
+                return (
+                    editable ?
+                        <Space size="middle">
+                            <Button type="primary" onClick={() => save(record.key)} >
+                                Save
+                            </Button>
+                            <Button type="primary" onClick={() => cancel()} danger>
+                                Cancel
+                            </Button>
+                        </Space>
+                        :
+                        <Space size="middle">
+                            <Button onClick={() => edit(record)}>
+                                <EditOutlined />
+                            </Button>
+                            <Button type="primary" onClick={() => removeRow(record)} danger>
+                                Delete
+                            </Button>
+                        </Space>
+                )
+            },
         },
     ]
 
@@ -75,13 +120,16 @@ function TablePage () {
 
         return {
             ...col,
-            onCell: (record: RowType) => ({
-                record,
-                inputType: col.dataIndex === 'key' ? 'number' : 'text',
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
+            onCell: (record: RowType) => {
+
+                return {
+                    record,
+                    inputType: col.dataIndex === 'key' ? 'number' : 'text',
+                    dataIndex: col.dataIndex,
+                    title: col.title,
+                    editing: isEditing(record),
+                }
+            },
         }
     })
 
@@ -92,12 +140,12 @@ function TablePage () {
             <td {...restProps}>
                 {editing ? (
                     <Form.Item
-                        name={dataIndex}
+                        name={ dataIndex }
                         style={{ margin: 0 }}
                         rules={[
                             {
                                 required: true,
-                                message: `Please Input ${title}!`,
+                                message: `Please Input ${ title }!`,
                             },
                         ]}
                     >
@@ -131,8 +179,6 @@ function TablePage () {
                     }}
                 />
             </Form>
-
-            <EditTableExample />
         </>
     )
 }
